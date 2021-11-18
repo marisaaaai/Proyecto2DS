@@ -18,9 +18,12 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
+import models
 
 siDesastre = pd.read_csv('siDesastre.csv')
 noDesastre = pd.read_csv('noDesastre.csv')
+
+
 
 # Instanciate the app
 app = dash.Dash(__name__, meta_tags = [{"name": "viewport", "content": "width=device-width"}])
@@ -90,8 +93,142 @@ app.layout = html.Div(
 			style = {
 				"margin-bottom": "25px"
 			}
-		)]
+		),
+        # (Second row) Cards: Global cases - Global deaths - Global recovered - Global active
+		html.Div(
+			children = [
+				# (Column 1): Global cases
+				html.Div(
+					children = [
+						# Title
+						html.H6(
+							children = "Tweets Reales",
+							style = {
+								"textAlign": "center",
+								"color": "white"
+							}
+						),
+						# Total value
+						html.P(
+							children = str(len(siDesastre)),
+							style = {
+								"textAlign": "center",
+								"color": "orange",
+								"fontSize": 40
+							}
+						),
+					],
+					className = "card_container three columns"
+				),
+				# (Column 2): Global deaths
+				html.Div(
+					children = [
+						# Title
+						html.H6(
+							children = "Tweets NO Reales",
+							style = {
+								"textAlign": "center",
+								"color": "white"
+							}
+						),
+						# Total value
+						html.P(
+							children = str(len(noDesastre)),
+							style = {
+								"textAlign": "center",
+								"color": "#dd1e35",
+								"fontSize": 40
+							}
+						),
+					],
+					className = "card_container three columns"
+				),
+            ]
+        ),
+        # (Third Row): Predict
+        html.Div(
+            children=[
+                html.Div(
+                    children=[
+                        # (Row 1) Country selector
+						html.P(
+							children = "Escribe algo: ",
+							className = "fix_label",
+							style = {
+								"color": "white"
+							}
+						),
+                        dcc.Input(
+                            id="input_text",
+                            type="text",
+                            placeholder="Escribe algo...",
+                            style={"margin": "1rem"}
+                        )
+                    ],
+                    className = "card_container three columns"
+                ),
+                html.Div(
+                    children=[
+                        html.P(
+							children = "Vectorizer + Multinomial NB Prediction: ",
+							className = "fix_label",
+							style = {
+								"color": "white"
+							}
+						),
+                        html.P(
+                            id="multinomialNBPrediction",
+                            style = {
+								"textAlign": "center",
+								"color": "orange",
+								"fontSize": 15,
+                                "margin-top": "1rem"
+							}   
+                        )
+                    ],
+                    className = "card_container three columns"
+                )
+            ]
+        )
+    ],
+    className="main__container"
 )
+
+@app.callback(
+    [
+        Output('multinomialNBPrediction','children'),
+        Output('multinomialNBPrediction', 'style')
+    ],
+    [
+        Input('input_text','value')
+    ]
+)
+def multinomialNBPred(tweet):
+    '''Get multinomialNB prediction'''
+
+    if tweet:
+
+        prediction = models.predictVectorizeMultinomialNB([tweet])
+
+        style = {
+            "textAlign": "center",
+            "color": "green",
+            "fontSize": 15,
+            "margin-top": "1rem"
+        }
+
+        if prediction[0] == 1:
+            style = {
+                "textAlign": "center",
+                "color": "red",
+                "fontSize": 15,
+                "margin-top": "1rem"
+            }
+        
+        return str(prediction[0]), style
+
+    return
+
 
 # Run the app
 if __name__ == "__main__":

@@ -3,6 +3,11 @@ body {
   margin: 5%;
 }
 
+.main__container {
+  display: flex;
+  flex-direction: column;
+}
+
 .card_container {
   border-radius: 5px;
   background-color: #1f2c56;
