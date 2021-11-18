@@ -167,6 +167,7 @@ app.layout = html.Div(
                     ],
                     className = "card_container three columns"
                 ),
+                # Vectorizer + Multinomial NB Prediction Card
                 html.Div(
                     children=[
                         html.P(
@@ -176,8 +177,32 @@ app.layout = html.Div(
 								"color": "white"
 							}
 						),
+                        # This is the label that change (1 Disaster, 0 Not a Disaster)
                         html.P(
                             id="multinomialNBPrediction",
+                            style = {
+								"textAlign": "center",
+								"color": "orange",
+								"fontSize": 15,
+                                "margin-top": "1rem"
+							}   
+                        )
+                    ],
+                    className = "card_container three columns"
+                ),
+                # Vectorizer Tfidf Card
+                html.Div(
+                    children=[
+                        html.P(
+							children = "Vectorizer Tfidf: ",
+							className = "fix_label",
+							style = {
+								"color": "white"
+							}
+						),
+                        # This is the label that change (1 Disaster, 0 Not a Disaster)
+                        html.P(
+                            id="vectorizer_tfidf",
                             style = {
 								"textAlign": "center",
 								"color": "orange",
@@ -197,38 +222,55 @@ app.layout = html.Div(
 @app.callback(
     [
         Output('multinomialNBPrediction','children'),
-        Output('multinomialNBPrediction', 'style')
+        Output('multinomialNBPrediction', 'style'),
+        Output('vectorizer_tfidf','children'),
+        Output('vectorizer_tfidf', 'style'),
     ],
     [
         Input('input_text','value')
     ]
 )
-def multinomialNBPred(tweet):
+def predictions(tweet):
     '''Get multinomialNB prediction'''
 
     if tweet:
 
-        prediction = models.predictVectorizeMultinomialNB([tweet])
+        VectorizeMultinomialNBPrediction = models.predictVectorizeMultinomialNB([tweet])
+        VectorizerTfidfPrediction = models.predictVectorizerTfidf([tweet])
 
-        style = {
+        VectorizeMultinomialNBStyle = {
             "textAlign": "center",
             "color": "green",
             "fontSize": 15,
             "margin-top": "1rem"
         }
 
-        if prediction[0] == 1:
-            style = {
+        VectorizerTfidfStyle = {
+            "textAlign": "center",
+            "color": "green",
+            "fontSize": 15,
+            "margin-top": "1rem"
+        }
+
+        if VectorizeMultinomialNBPrediction[0] == 1:
+            VectorizeMultinomialNBStyle = {
                 "textAlign": "center",
                 "color": "red",
                 "fontSize": 15,
                 "margin-top": "1rem"
             }
         
-        return str(prediction[0]), style
+        if VectorizerTfidfPrediction[0] == 1:
+            VectorizerTfidfStyle = {
+                "textAlign": "center",
+                "color": "red",
+                "fontSize": 15,
+                "margin-top": "1rem"
+            }
+        
+        return str(VectorizeMultinomialNBPrediction[0]), VectorizeMultinomialNBStyle, str(VectorizerTfidfPrediction[0]), VectorizerTfidfStyle
 
     return
-
 
 # Run the app
 if __name__ == "__main__":

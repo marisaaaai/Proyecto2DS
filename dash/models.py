@@ -20,6 +20,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neural_network import MLPClassifier
+import pickle
 
 # Import Dataset
 cleanData = pd.read_csv("train.csv")
@@ -49,8 +52,15 @@ y_train = train['target']
 X_test = test['new text']
 model_VectorizeMultinomialNB.fit(X_train, y_train)
 
-def predictVectorizeMultinomialNB(tweet):
+# Import Vectorizer Tfidf model
+vectorizer_tfidf_pipeline = pickle.load(open('vectorizer_tfidf.pickle', 'rb'))
+
+def predictVectorizeMultinomialNB(tweets):
     '''Predict with Vectorize Multinomial NB'''
 
-    return model_VectorizeMultinomialNB.predict(tweet)
+    return model_VectorizeMultinomialNB.predict(tweets)
 
+def predictVectorizerTfidf(tweet):
+    '''Predict with Vectorizer Tfidf'''
+
+    return vectorizer_tfidf_pipeline.predict(tweet)
