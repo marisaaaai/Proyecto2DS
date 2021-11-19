@@ -26,8 +26,8 @@ external_stylesheets = [
      dbc.themes.SLATE
 ]
 
-siDesastre = pd.read_csv('../siDesastre.csv')
-noDesastre = pd.read_csv('../noDesastre.csv')
+siDesastre = pd.read_csv('../sd.csv')
+noDesastre = pd.read_csv('../nd.csv')
 
 # PRUEBAS  
 covid_data_5 = {
