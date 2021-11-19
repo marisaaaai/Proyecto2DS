@@ -29,6 +29,20 @@ external_stylesheets = [
 siDesastre = pd.read_csv('../siDesastre.csv')
 noDesastre = pd.read_csv('../noDesastre.csv')
 
+# PRUEBAS  
+covid_data_5 = {
+        "Lat": [15.783471],
+        "Long": [-90.230759]
+    }
+
+df = pd.DataFrame(covid_data_5)
+
+fig = go.Figure(data=go.Scattergeo(
+    lon=df['Long'],
+    lat=df['Lat'],
+    mode='markers',
+))
+
 # Instanciate the app
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, meta_tags = [{"name": "viewport", "content": "width=device-width"}])
 
@@ -223,6 +237,7 @@ app.layout = html.Div(
                 )
             ]
         ),
+        # Title Fourth Row
         html.Div(
             children=[
                 # Vectorizer + Multinomial NB Prediction Card
@@ -338,11 +353,58 @@ app.layout = html.Div(
                 "justify-content": "space-between"
             }
         ),
+        # Fifth Row
+        html.Div(
+            children=[
+                # Title
+                html.H4(
+                    children = "Tweet Locations",
+                    style = {
+                        "padding-left": "2rem",
+                        "color": "white"
+                    }
+                )
+            ]
+        ),
+        # Drop Down
+        html.Div(
+            children=[
+                # Input
+                html.Div(
+                    children=[
+                        # (Row 1) Country selector
+						html.P(
+							children = "Choose tweet types: ",
+							className = "fix_label",
+							style = {
+								"color": "white"
+							}
+						),
+                        dcc.Dropdown(
+							id = "tweet_type",
+							multi = False,
+							searchable = True,
+							value = "Real Tweets",
+							placeholder = "Tweet Type",
+							options = [{"label": "Real Tweets", "value": "Real Tweets"}, {"label": "Fake Tweets", "value": "Fake Tweets"}],
+							className = "dcc_compon"
+						),
+                    ],
+                    className = "create_container three columns"
+                )
+            ]
+        ),
+        # Map
+        # (Fourth Row) Map
+        html.Div(children=[
+            dcc.Graph(
+                id='map_chart',
+                figure=fig
+            )
+        ])
     ],
     className="main__container"
 )
-
-
 
 @app.callback(
     [
@@ -453,6 +515,55 @@ def predictions(tweet):
         return vectorizeMultinomialNBPrediction_real, VectorizeMultinomialNBStyle, VectorizerTfidfPrediction_real, VectorizerTfidfStyle, mnb_check_style, mnb_x_style, tfidf_check_style, tfidf_x_style
 
     return
+
+# Map
+@app.callback(
+	Output(
+		component_id = "map_chart",
+		component_property = "figure"
+	),
+	Input(
+		component_id = "tweet_type",
+		component_property = "value"
+	)
+)
+def update_map(tweet_type):
+
+    # !TODO: Pasar todas las latitudes y longitudes al df completo
+
+    # PRUEBAS  
+    covid_data_5 = {
+            "Lat": [15.783471],
+            "Long": [-90.230759]
+        }
+
+    df = pd.DataFrame(covid_data_5)
+
+    if tweet_type == "Real Tweets":
+        fig = go.Figure(data=go.Scattergeo(
+            lon=df['Long'],
+            lat=df['Lat'],
+            mode='markers',
+        ))
+    elif tweet_type == "Fake Tweets":
+        # 19.42847 y longitud -99.12766
+
+        covid_data_5 = {
+            "Lat": [19.42847],
+            "Long": [-99.12766]
+        }
+
+        df = pd.DataFrame(covid_data_5)
+
+        fig = go.Figure(data=go.Scattergeo(
+            lon=df['Long'],
+            lat=df['Lat'],
+            mode='markers',
+        ))
+
+    return fig
+
+
 
 # Run the app
 if __name__ == "__main__":
