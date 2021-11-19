@@ -1,5 +1,4 @@
 '''
-
         Proyecto 2
         Dashboard
 
@@ -11,7 +10,6 @@ Creado por:
 *   Juan Fernando de Leon Quezada  17822
 
 '''
-
 import dash
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -537,12 +535,12 @@ def update_map(tweet_type):
             "Long": [-90.230759]
         }
 
-    df = pd.DataFrame(covid_data_5)
+    df = siDesastre
 
     if tweet_type == "Real Tweets":
         fig = go.Figure(data=go.Scattergeo(
-            lon=df['Long'],
-            lat=df['Lat'],
+            lon=df['long'],
+            lat=df['lat'],
             mode='markers',
         ))
     elif tweet_type == "Fake Tweets":
@@ -553,11 +551,11 @@ def update_map(tweet_type):
             "Long": [-99.12766]
         }
 
-        df = pd.DataFrame(covid_data_5)
+        df = noDesastre
 
         fig = go.Figure(data=go.Scattergeo(
-            lon=df['Long'],
-            lat=df['Lat'],
+            lon=df['long'],
+            lat=df['lat'],
             mode='markers',
         ))
 
