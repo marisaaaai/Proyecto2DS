@@ -14,19 +14,23 @@ Creado por:
 
 import dash
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 import models
 
-siDesastre = pd.read_csv('siDesastre.csv')
-noDesastre = pd.read_csv('noDesastre.csv')
+external_stylesheets = [
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
+     dbc.themes.SLATE
+]
 
-
+siDesastre = pd.read_csv('../siDesastre.csv')
+noDesastre = pd.read_csv('../noDesastre.csv')
 
 # Instanciate the app
-app = dash.Dash(__name__, meta_tags = [{"name": "viewport", "content": "width=device-width"}])
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, meta_tags = [{"name": "viewport", "content": "width=device-width"}])
 
 # Build the layout
 app.layout = html.Div(
@@ -89,11 +93,27 @@ app.layout = html.Div(
 				)
 			],
 			id = "header",
-			className = "row flex-display",
+			# className = "row flex-display",
 			style = {
-				"margin-bottom": "25px"
+				"margin-bottom": "25px",
+                "display": "flex",
+                "flex-direction": "row",
+                "justify-content": "center"
 			}
 		),
+        # Title second row
+        html.Div(
+            children=[
+                # Title
+                html.H4(
+                    children = "Proporción de Tweets",
+                    style = {
+                        "padding-left": "2rem",
+                        "color": "white"
+                    }
+                )
+            ]
+        ),
         # (Second row) Cards: Global cases - Global deaths - Global recovered - Global active
 		html.Div(
 			children = [
@@ -143,16 +163,34 @@ app.layout = html.Div(
 					],
 					className = "card_container three columns"
 				),
+            ],
+            style = {
+                "display": "flex",
+                "flex-direction": "row",
+            }
+        ),
+        # Title third row
+        html.Div(
+            children=[
+                # Title
+                html.H4(
+                    children = "Prediccion de Tweets",
+                    style = {
+                        "padding-left": "2rem",
+                        "color": "white"
+                    }
+                )
             ]
         ),
         # (Third Row): Predict
         html.Div(
             children=[
+                # Input
                 html.Div(
                     children=[
                         # (Row 1) Country selector
 						html.P(
-							children = "Escribe algo: ",
+							children = "Escribe un tweet: ",
 							className = "fix_label",
 							style = {
 								"color": "white"
@@ -162,11 +200,31 @@ app.layout = html.Div(
                             id="input_text",
                             type="text",
                             placeholder="Escribe algo...",
-                            style={"margin": "1rem"}
+                            style={
+                                "margin": "1rem",
+                                "width": "75%"
+                            }
                         )
                     ],
-                    className = "card_container three columns"
-                ),
+                    className = "card_container"
+                )
+            ]
+        ),
+        # Title Fourth Row
+        html.Div(
+            children=[
+                # Title
+                html.H4(
+                    children = "Prediccion de modelos",
+                    style = {
+                        "padding-left": "2rem",
+                        "color": "white"
+                    }
+                )
+            ]
+        ),
+        html.Div(
+            children=[
                 # Vectorizer + Multinomial NB Prediction Card
                 html.Div(
                     children=[
@@ -177,6 +235,35 @@ app.layout = html.Div(
 								"color": "white"
 							}
 						),
+                        html.Div(
+                            children=[
+                                html.I(
+                                    id="mnb_check",
+                                    className="fa fa-check-circle",
+                                    style={
+                                        "color": "green",
+                                        "font-size": "8rem",
+                                        "opacity": "0.25"
+                                    }
+                                ),
+                                html.I(
+                                    id="mnb_x",
+                                    className="fa fa-times-circle",
+                                    style={
+                                        "color": "red",
+                                        "font-size": "8rem",
+                                        "opacity": "0.25"
+                                    }
+                                ),
+                            ],
+                            style={
+                                "display": "flex",
+                                "flex-direction": "row",
+                                "justify-content": "space-around",
+                                "width": "100%",
+                                "padding": "2rem"
+                            }
+                        ),
                         # This is the label that change (1 Disaster, 0 Not a Disaster)
                         html.P(
                             id="multinomialNBPrediction",
@@ -188,7 +275,8 @@ app.layout = html.Div(
 							}   
                         )
                     ],
-                    className = "card_container three columns"
+                    className = "card_container three columns",
+                    style={ "width": "50%" }
                 ),
                 # Vectorizer Tfidf Card
                 html.Div(
@@ -200,6 +288,35 @@ app.layout = html.Div(
 								"color": "white"
 							}
 						),
+                        html.Div(
+                            children=[
+                                html.I(
+                                    id="tfidf_check",
+                                    className="fa fa-check-circle",
+                                    style={
+                                        "color": "green",
+                                        "font-size": "8rem",
+                                        "opacity": "0.25"
+                                    }
+                                ),
+                                html.I(
+                                    id="tfidf_x",
+                                    className="fa fa-times-circle",
+                                    style={
+                                        "color": "red",
+                                        "font-size": "8rem",
+                                        "opacity": "0.25"
+                                    }
+                                ),
+                            ],
+                            style={
+                                "display": "flex",
+                                "flex-direction": "row",
+                                "justify-content": "space-around",
+                                "width": "100%",
+                                "padding": "2rem"
+                            }
+                        ),
                         # This is the label that change (1 Disaster, 0 Not a Disaster)
                         html.P(
                             id="vectorizer_tfidf",
@@ -211,13 +328,21 @@ app.layout = html.Div(
 							}   
                         )
                     ],
-                    className = "card_container three columns"
+                    className = "card_container three columns",
+                    style={ "width": "50%" }
                 )
-            ]
-        )
+            ],
+            style = {
+                "display": "flex",
+                "flex-direction": "row",
+                "justify-content": "space-between"
+            }
+        ),
     ],
     className="main__container"
 )
+
+
 
 @app.callback(
     [
@@ -225,6 +350,10 @@ app.layout = html.Div(
         Output('multinomialNBPrediction', 'style'),
         Output('vectorizer_tfidf','children'),
         Output('vectorizer_tfidf', 'style'),
+        Output('mnb_check', 'style'),
+        Output('mnb_x', 'style'),
+        Output('tfidf_check', 'style'),
+        Output('tfidf_x', 'style')
     ],
     [
         Input('input_text','value')
@@ -238,37 +367,90 @@ def predictions(tweet):
         VectorizeMultinomialNBPrediction = models.predictVectorizeMultinomialNB([tweet])
         VectorizerTfidfPrediction = models.predictVectorizerTfidf([tweet])
 
+        mnb_check_style = {
+            "color": "green",
+            "font-size": "8rem",
+            "opacity": "0.25"
+        }
+
+        mnb_x_style = {
+            "color": "red",
+            "font-size": "8rem",
+            "opacity": "0.25"
+        }
+
+        tfidf_check_style = {
+            "color": "green",
+            "font-size": "8rem",
+            "opacity": "0.25"
+        }
+
+        tfidf_x_style = {
+            "color": "red",
+            "font-size": "8rem",
+            "opacity": "0.25"
+        }
+
         VectorizeMultinomialNBStyle = {
             "textAlign": "center",
-            "color": "green",
+            "color": "red",
             "fontSize": 15,
             "margin-top": "1rem"
         }
 
         VectorizerTfidfStyle = {
             "textAlign": "center",
-            "color": "green",
+            "color": "red",
             "fontSize": 15,
             "margin-top": "1rem"
         }
 
+        vectorizeMultinomialNBPrediction_real = "NOT Real Tweet"
+        VectorizerTfidfPrediction_real = "NOT Real Tweet"
+
         if VectorizeMultinomialNBPrediction[0] == 1:
+            mnb_check_style = {
+                "color": "green",
+                "font-size": "8rem",
+                "opacity": "1"
+            }
+
+            vectorizeMultinomialNBPrediction_real = "Real Tweet"
             VectorizeMultinomialNBStyle = {
                 "textAlign": "center",
-                "color": "red",
+                "color": "green",
                 "fontSize": 15,
                 "margin-top": "1rem"
             }
+        else:
+            mnb_x_style = {
+                "color": "red",
+                "font-size": "8rem",
+                "opacity": "1"
+            }
+
         
         if VectorizerTfidfPrediction[0] == 1:
+            tfidf_check_style = {
+                "color": "green",
+                "font-size": "8rem",
+                "opacity": "1"
+            }
+            VectorizerTfidfPrediction_real = "Real Tweet"
             VectorizerTfidfStyle = {
                 "textAlign": "center",
-                "color": "red",
+                "color": "green",
                 "fontSize": 15,
                 "margin-top": "1rem"
             }
+        else:
+            tfidf_x_style = {
+                "color": "red",
+                "font-size": "8rem",
+                "opacity": "1"
+            }
         
-        return str(VectorizeMultinomialNBPrediction[0]), VectorizeMultinomialNBStyle, str(VectorizerTfidfPrediction[0]), VectorizerTfidfStyle
+        return vectorizeMultinomialNBPrediction_real, VectorizeMultinomialNBStyle, VectorizerTfidfPrediction_real, VectorizerTfidfStyle, mnb_check_style, mnb_x_style, tfidf_check_style, tfidf_x_style
 
     return
 
